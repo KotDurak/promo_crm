@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Create Organization{% endblock %}
+
+{% block body %}
+    <h1>Создание организации</h1>
+
+    {{ form_start(form, {'attr': {'class': 'needs-validation'}, 'novalidate': 'novalidate'}) }}
+
+    <div class="mb-3">
+        {{ form_label(form.name) }}
+        {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.name) }}
+    </div>
+
+    <h5>Владелец организации</h5>
+
+    <div class="mb-3">
+        {{ form_label(form.owner.name) }}
+        {{ form_widget(form.owner.name, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.owner.name) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.owner.email) }}
+        {{ form_widget(form.owner.email, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.owner.email) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.owner.password) }}
+        {{ form_widget(form.owner.password, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.owner.password) }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Создать</button>
+
+    {{ form_end(form) }}
+
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+{% endblock %}

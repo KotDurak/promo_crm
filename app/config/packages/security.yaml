@@ -1,0 +1,31 @@
+security:
+    password_hashers:
+        App\Entity\User:
+            algorithm: auto
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\User
+                property: email
+
+    firewalls:
+        main:
+            pattern: ^/
+            provider: app_user_provider
+            lazy: true
+            form_login:
+                login_path: app_login
+                check_path: app_login_check
+                default_target_path: /dashboard
+                enable_csrf: true
+            logout:
+                path: app_logout
+                target: app_login
+            stateless: false # Это позволит обрабатывать анонимные запросы
+
+    access_control:
+        - { path: ^/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/login_check$, roles: PUBLIC_ACCESS }
+        - { path: ^/logout$, roles: PUBLIC_ACCESS }
+        - { path: ^/dashboard, roles: [ROLE_USER, ROLE_OWNER] }

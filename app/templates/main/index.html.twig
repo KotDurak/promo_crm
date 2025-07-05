@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Promo CRM{% endblock %}
+
+{% block body %}
+    <div class="text-center my-5">
+        <h1>Добро пожаловать в наш проект!</h1>
+        <p class="lead">
+            Здесь вы можете зарегистрировать свою организацию и управлять пользователями.
+        </p>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <a href="#" class="btn btn-primary btn-lg">Вход</a>
+            <a href="{{ path('create_organization') }}" class="btn btn-success btn-lg">Создать организацию</a>
+        </div>
+    </div>
+{% endblock %}
