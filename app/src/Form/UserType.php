@@ -14,14 +14,18 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+
         $builder
             ->add('name', TextType::class, ['label' => 'Имя владельца организации'])
             ->add('email', EmailType::class)
-            ->add('password', PasswordType::class);
+            ->add('password', PasswordType::class, [
+                'required' => !$options['is_edit'],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(['data_class' => User::class]);
+        $resolver->setDefaults(['data_class' => User::class, 'is_edit' => false]);
+        $resolver->setAllowedTypes('is_edit', 'bool');
     }
 }

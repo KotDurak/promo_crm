@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
@@ -38,7 +39,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $promoCodesCreated;
 
     #[ORM\Column(type: 'string', length: 100)]
-    private string $password;
+    #[Assert\NotBlank(groups: ['create'])]
+    private ?string $password = null;
 
 
     public function __construct()
@@ -124,9 +126,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->password;
     }
 
-    public function setPassword(string $password): self
+    public function setPassword(?string $password): self
     {
-        $this->password = $password;
+
+        if (!empty(trim((string)$password))) {
+            $this->password = $password;
+        }
 
         return $this;
     }
@@ -152,5 +157,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserIdentifier(): string
     {
         return $this->email;
+    }
+
+    public function isOwner(): bool
+    {
+        return $this->role === self::ROLE_OWNER;
     }
 }
