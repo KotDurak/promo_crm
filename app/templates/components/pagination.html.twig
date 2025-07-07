@@ -1,0 +1,23 @@
+<nav>
+    {% if pagination.getPageCount() > 0 %}
+    <ul class="pagination">
+        {% if pagination.getCurrentPageNumber() > 1 %}
+            <li class="page-item">
+                <a class="page-link" href="{{ path(route_name, {'page': pagination.getCurrentPageNumber() - 1}) }}">Предыдущая</a>
+            </li>
+        {% endif %}
+
+        {% for page in 1..pagination.getPageCount() %}
+            <li class="page-item {% if page == pagination.getCurrentPageNumber() %}active{% endif %}">
+                <a class="page-link" href="{{ path(route_name, {'page': page}) }}">{{ page }}</a>
+            </li>
+        {% endfor %}
+
+        {% if pagination.getCurrentPageNumber() < pagination.getPageCount() %}
+            <li class="page-item">
+                <a class="page-link" href="{{ path(route_name, {'page': pagination.getCurrentPageNumber() + 1}) }}">Следующая</a>
+            </li>
+        {% endif %}
+    </ul>
+    {% endif %}
+</nav>

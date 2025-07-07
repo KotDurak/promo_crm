@@ -8,10 +8,10 @@
                 </li>
                 {% if 'ROLE_OWNER' in app.user.roles %}
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Организации</a>
+                        <a class="nav-link" href="{{ path('user_list') }}">Сотрудники</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Сотрудники</a>
+                        <a class="nav-link" href="{{ path('app_promo_code_type') }}">Типы промокодов</a>
                     </li>
                 {% endif %}
                 {% if 'ROLE_USER' in app.user.roles %}

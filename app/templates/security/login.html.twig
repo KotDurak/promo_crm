@@ -3,21 +3,35 @@
 {% block title %}Вход{% endblock %}
 
 {% block body %}
-    <h1>Вход</h1>
+    <div class="container mt-5" style="max-width: 400px;">
+        <h1 class="mb-4">Вход</h1>
 
-    {% if error %}
-        <div style="color: red;">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+        {% if error %}
+            <div class="alert alert-danger" role="alert">
+                {{ error.messageKey|trans(error.messageData, 'security') }}
+            </div>
+        {% endif %}
 
-    <form action="{{ path('app_login_check') }}" method="post">
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="_username" value="{{ last_username }}" required autofocus>
+        <form action="{{ path('app_login_check') }}" method="post">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="text" class="form-control" id="email" name="_username" value="{{ last_username }}" required autofocus>
+            </div>
 
-        <label for="password">Пароль:</label>
-        <input type="password" id="password" name="_password" required>
+            <div class="mb-3">
+                <label for="password" class="form-label">Пароль</label>
+                <input type="password" class="form-control" id="password" name="_password" required>
+            </div>
 
-        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="remember_me" name="_remember_me" />
+                <label class="form-check-label" for="remember_me">
+                    Запомнить меня
+                </label>
+            </div>
 
-        <button type="submit">Войти</button>
-    </form>
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <button type="submit" class="btn btn-primary w-100">Войти</button>
+        </form>
+    </div>
 {% endblock %}

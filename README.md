@@ -1,37 +1,59 @@
-# Symfony + PostgreSQL Docker Setup
+# Промокод-менеджер на Symfony
 
-Этот проект демонстрирует создание и запуск Symfony-приложения с базой данных PostgreSQL, управляемой через Docker Compose. В проекте используются контейнеры для сервера, базы данных и веб-интерфейса для управления базой.
+## Описание проекта
 
----
+Система управления промокодами с REST API на базе Symfony. Проект предоставляет возможность создания, управления и отслеживания промокодов с использованием PostgreSQL в качестве базы данных.
 
-## Что было сделано
+## Технологии
 
-- Настроена инфраструктура Docker Compose с сервисами:
-    - Symfony приложение
-    - Nginx
-    - PostgreSQL
-    - Adminer (или pgAdmin) для управления базой
-- Создан Dockerfile для PHP с Xdebug
-- Настроены подключения к базе данных из Symfony
-- Проверена работоспособность базы и соединения
+* **Symfony** - PHP фреймворк
+* **PostgreSQL** - база данных
+* **Nginx** - веб-сервер
+* **PHP 8.2** - язык программирования
+* **Docker Compose** - оркестрация контейнеров
 
----
+## Установка
 
-## Как запустить проект локально
+### Требования
 
-### 1. Клонируйте репозиторий или подготовьте проект
+* Docker
+* Docker Compose
 
-git clone <вашрепозиторий>
-cd <папкапроекта>
+### Запуск проекта
 
-### 2. Соберите проект
-docker-compose up -d --build
-docker-compose run --rm app composer create-project symfony/website-skeleton .
+1. Клонирование репозитория:
+```bash
+git clone <ссылка-на-репозиторий>
+cd проект
+```
 
+2. Запуск контейнеров:
+```bash
+docker-compose up -d
+```
 
-Контейнеры запустятся и будут доступны по портам:
+## Установка зависимостей
 
-- **Symfony**: [http://localhost:8080](http://localhost:8080)
-- **Nginx**: [http://localhost:8080](http://localhost:8080)
-- **PostgreSQL**: DATABASE_URL="postgresql://symfony_user:secret@db:5432/symfony?serverVersion=16&charset=utf8"
-- **Adminer** (если включен): [http://localhost:8082](http://localhost:8082)
+Для установки всех необходимых зависимостей используйте команду:
+```bash
+docker-compose run --rm app composer install
+```
+
+## Миграции
+
+Для применения миграций выполните следующие команды:
+```bash
+docker-compose run --rm app php bin/console doctrine:migrations:migrate
+```
+
+## Использование консольных команд
+
+Для выполнения консольных команд Symfony используйте:
+```bash
+docker-compose run --rm app php bin/console [команда]
+```
+
+Пример:
+```bash
+docker-compose run --rm app php bin/console doctrine:schema:update --force
+```

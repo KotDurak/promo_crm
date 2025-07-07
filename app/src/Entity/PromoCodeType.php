@@ -6,6 +6,7 @@ use App\Repository\PromoCodeTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PromoCodeTypeRepository::class)]
 #[ORM\Table(name: "promo_code_type",
@@ -21,17 +22,24 @@ class PromoCodeType
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: 'Это поле обязательно')]
     private string $name;
 
     #[ORM\Column(type: 'integer')]
+    #[Assert\NotBlank(message: 'Это поле обязательно')]
     private int $cashback;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: 'Это поле обязательно')]
     private string $type;
 
     #[ORM\ManyToOne(targetEntity: Organization::class, inversedBy: 'promoCodeTypes')]
     #[ORM\JoinColumn(nullable: false)]
     private Organization $organization;
+
+
+    #[ORM\Column(type: 'integer')]
+    private int $organization_id;
 
     #[ORM\OneToMany(
         targetEntity: PromoCode::class,
@@ -105,6 +113,30 @@ class PromoCodeType
                 $promoCode->setPromoCodeType(null);
             }
         }
+        return $this;
+    }
+
+    public function getOrganizationId()
+    {
+        return $this->organization_id;
+    }
+
+    public function setOrganizationId(int $id): self
+    {
+        $this->organization_id = $id;
+
+        return $this;
+    }
+
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    public function setType(string $type): self
+    {
+        $this->type = $type;
+
         return $this;
     }
 }

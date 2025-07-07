@@ -1,0 +1,28 @@
+{# templates/dashboard/promo_code_type/form.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-5" style="max-width: 600px;">
+        <h1 class="mb-4">{{ title }}</h1>
+        {{ form_start(form) }}
+        <div class="mb-3">
+            {{ form_label(form.name, 'Название', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.name) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.cashback, 'Кэшбэк', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.cashback, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.cashback) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.type, 'Тип', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+            {{ form_errors(form.type) }}
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
