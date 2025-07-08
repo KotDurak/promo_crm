@@ -30,8 +30,8 @@ final class PromoCodeTypeController extends AbstractController
         $queryBuilder = $this->entityManager
             ->getRepository(PromoCodeType::class)
             ->createQueryBuilder('p')
-            ->andWhere('p.organization_id = :org')
-            ->setParameter('org', $organizationId);
+            ->andWhere('p.organization = :org')
+            ->setParameter('org', $user->getOrganization());
 
         $pagination = $paginator->paginate(
             $queryBuilder,
@@ -72,7 +72,7 @@ final class PromoCodeTypeController extends AbstractController
     {
         $promoCode = $this->entityManager->getRepository(PromoCodeType::class)->find($id);
 
-        if (!$promoCode || $promoCode->getOrganizationId() !== $this->getUser()->getOrganization()->getId()) {
+        if (!$promoCode || $promoCode->getOrganization() !== $this->getUser()->getOrganization()) {
             throw $this->createNotFoundException('Тип не найден или доступ запрещен');
         }
 

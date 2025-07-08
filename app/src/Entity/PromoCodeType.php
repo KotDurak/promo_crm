@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: PromoCodeTypeRepository::class)]
 #[ORM\Table(name: "promo_code_type",
     uniqueConstraints: [
-        new ORM\UniqueConstraint(name: "uniq_type_organization", columns: ["type", "organization_id"])
+        new ORM\UniqueConstraint(name: "uniq_type_organization", columns: ["organization_id", "type"])
     ]
 )]
 class PromoCodeType
@@ -36,10 +36,6 @@ class PromoCodeType
     #[ORM\ManyToOne(targetEntity: Organization::class, inversedBy: 'promoCodeTypes')]
     #[ORM\JoinColumn(nullable: false)]
     private Organization $organization;
-
-
-    #[ORM\Column(type: 'integer')]
-    private int $organization_id;
 
     #[ORM\OneToMany(
         targetEntity: PromoCode::class,
@@ -116,17 +112,6 @@ class PromoCodeType
         return $this;
     }
 
-    public function getOrganizationId()
-    {
-        return $this->organization_id;
-    }
-
-    public function setOrganizationId(int $id): self
-    {
-        $this->organization_id = $id;
-
-        return $this;
-    }
 
     public function getType(): ?string
     {

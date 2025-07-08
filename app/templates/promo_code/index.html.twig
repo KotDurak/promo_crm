@@ -1,0 +1,45 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block title %}Мои промокоды{% endblock %}
+
+{% block body %}
+    <h1>Мои промокоды</h1>
+
+    <a href="{{ path('app_promocode_new') }}" class="btn btn-success mb-3">Добавить новый промокод</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Код</th>
+            <th>Тип</th>
+            <th>Кешбек</th>
+            <th>Действия</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for promo in pagination.items %}
+            <tr>
+                <td>{{ promo.id }}</td>
+                <td>{{ promo.code }}</td>
+                <td>{{ promo.promoCodeType.name }}</td>
+                <td>{{ promo.promoCodeType.cashback }}%</td>
+                <td>
+                    <a href="{{ path('app_promocode_edit', {id: promo.id}) }}" class="btn btn-primary btn-sm">Редактировать</a>
+                    <a href="{{ path('app_promocode_delete', {id: promo.id}) }}"
+                       class="btn btn-danger btn-sm"
+                       onclick="return confirm('Удалить?')">
+                        Удалить
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {# Пагинация #}
+    {% include 'components/pagination.html.twig' with {
+        pagination: pagination,
+        route_name: route_name
+    } %}
+{% endblock %}

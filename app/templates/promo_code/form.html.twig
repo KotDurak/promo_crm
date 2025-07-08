@@ -1,0 +1,28 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block title %}Создать промокод{% endblock %}
+
+{% block body %}
+    <h1>{{ title }}</h1>
+
+
+        {{ form_start(form) }}
+
+        <div class="mb-3">
+            {{ form_label(form.code, 'Код промокода', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.code, {'attr': {'class': 'form-control', 'placeholder': 'Введите уникальный код'}}) }}
+            {{ form_errors(form.code) }}
+        </div>
+
+        <div class="mb-3">
+            {{ form_label(form.promoCodeType, 'Тип промокода', {'label_attr': {'class': 'form-label'}}) }}
+            {{ form_widget(form.promoCodeType, {'attr': {'class': 'form-select'}}) }}
+            {{ form_errors(form.promoCodeType) }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+        <a href="{{ path('app_promo_code') }}" class="btn btn-secondary">Отмена</a>
+
+        {{ form_end(form) }}
+
+{% endblock %}

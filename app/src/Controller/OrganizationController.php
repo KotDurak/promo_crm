@@ -4,14 +4,15 @@ namespace App\Controller;
 
 use App\Entity\Organization;
 use App\Entity\User;
+use App\Form\OrganizationEditTypeForm;
 use App\Form\OrganizationType;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 
 
@@ -67,6 +68,30 @@ final class OrganizationController extends AbstractController
 
         return $this->render('organization/create.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+
+    #[Route('/organization/edit', name: 'app_organization_settings')]
+    #[IsGranted('ROLE_OWNER')]
+    public function edit(Request $request,): Response
+    {
+        $organization = $this->entityManager
+            ->getRepository(Organization::class)
+            ->findOneBy(['owner' => $this->getUser()]);
+
+        $form = $this->createForm(OrganizationEditTypeForm::class, $organization);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->flush();
+            $this->addFlash('success', 'Настройки организации сохранены');
+
+            return $this->redirectToRoute('app_organization_settings');
+        }
+
+        return $this->render('organization/settings.html.twig', [
+            'form'  => $form->createView()
         ]);
     }
 }

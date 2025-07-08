@@ -6,6 +6,12 @@ use App\Repository\PromoCodeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PromoCodeRepository::class)]
+#[ORM\Table(
+    name: 'promo_code',
+    uniqueConstraints: [
+        new ORM\UniqueConstraint(name: 'uniq_organization_code', columns: ['organization_id', 'code'])
+    ]
+)]
 class PromoCode
 {
     #[ORM\Id]
@@ -13,7 +19,7 @@ class PromoCode
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type:"string", length:100, unique: true)]
+    #[ORM\Column(type:"string", length:100)]
     private string $code;
 
     #[ORM\ManyToOne(targetEntity: PromoCodeType::class, inversedBy: "promoCodes")]
@@ -24,6 +30,10 @@ class PromoCode
     #[ORM\JoinColumn(nullable: false)]
     private User $createdBy;
 
+
+    #[ORM\ManyToOne(targetEntity: Organization::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private Organization $organization;
 
     public function getId(): ?int
     {
@@ -57,6 +67,18 @@ class PromoCode
     public function setCreatedBy(?User $user = null): self
     {
         $this->createdBy = $user;
+        return $this;
+    }
+
+    public function getOrganization(): Organization
+    {
+        return $this->organization;
+    }
+
+    public function setOrganization(Organization $organization): self
+    {
+        $this->organization = $organization;
+
         return $this;
     }
 }
