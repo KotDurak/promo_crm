@@ -26,7 +26,6 @@ final class PromoCodeTypeController extends AbstractController
          * @var User $user
         */
         $user = $this->getUser();
-        $organizationId = $user->getOrganization()->getId();
         $queryBuilder = $this->entityManager
             ->getRepository(PromoCodeType::class)
             ->createQueryBuilder('p')

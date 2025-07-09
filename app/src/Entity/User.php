@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use http\Exception\InvalidArgumentException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -41,6 +42,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'string', length: 100)]
     #[Assert\NotBlank(groups: ['create'])]
     private ?string $password = null;
+
+    #[ORM\Column(type: 'decimal', precision: 10, scale: 2, options: ['default' => 0])]
+    private int $balance = 0;
 
 
     public function __construct()
@@ -162,5 +166,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function isOwner(): bool
     {
         return $this->role === self::ROLE_OWNER;
+    }
+
+    public function getBalance(): float
+    {
+        return $this->balance;
+    }
+
+    public function setBalance(float $balance): self
+    {
+
+        if ($balance < 0) {
+            throw new InvalidArgumentException('Баланс не может быть меньше 0');
+        }
+
+        $this->balance = $balance;
+
+        return $this;
     }
 }

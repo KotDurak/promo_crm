@@ -1,0 +1,40 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h2>Мои заявки на вывод</h2>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th>Создано</th>
+                <th>Выплачено</th>
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for w in pagination.items %}
+                <tr>
+                    <td>{{ w.id }}</td>
+                    <td>{{ w.sum }}</td>
+                    <td>{{ w.status.getLabel() }}</td>
+                    <td>{{ w.createdAt|date('d.m.Y H:i') }}</td>
+                    <td>{{ w.paidAt ? w.paidAt|date('d.m.Y H:i') : '—' }}</td>
+                    <td>
+                        {% if w.status.isPending() %}
+                            <a href="{{ path('withdrawal_cancel', {'id': w.id}) }}" onclick="confirm('Отменить заявку?')" class="btn btn-sm btn-danger">Отменить</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% include 'components/pagination.html.twig' with {
+            pagination: pagination,
+            route_name: route_name
+        } %}
+    </div>
+{% endblock %}

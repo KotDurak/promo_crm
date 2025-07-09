@@ -1,0 +1,76 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h2>Все заявки</h2>
+
+        <form method="get" class="row g-3 mb-4">
+            <div class="col-md-3">
+                <label for="status" class="form-label">Статус</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">Все</option>
+                    {% for value, label in statusesList %}
+                        <option value="{{ value }}" {% if app.request.query.get('status') == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label for="requesting_user_id" class="form-label">Пользователь</label>
+                <select class="form-select" id="requesting_user_id" name="requesting_user_id">
+                    <option value="">Все пользователи</option>
+                    {% for user in users %}
+                        <option value="{{ user.id }}" {% if app.request.query.get('requesting_user_id') == user.id %}selected{% endif %}>{{ user.email }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label for="created_from" class="form-label">Дата от</label>
+                <input type="date" class="form-control" id="created_from" name="created_from" value="{{ app.request.query.get('created_from') }}">
+            </div>
+
+            <div class="col-md-3">
+                <label for="created_to" class="form-label">Дата до</label>
+                <input type="date" class="form-control" id="created_to" name="created_to" value="{{ app.request.query.get('created_to') }}">
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Фильтровать</button>
+                <a href="{{ path('owner_withdrawals') }}" class="btn btn-secondary">Сбросить</a>
+            </div>
+        </form>
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Пользователь</th>
+                <th>Email</th>
+                <th>Сумма</th>
+                <th>Статус</th>
+                <th>Создано</th>
+                <th>Выплачено</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for wr in pagination.items %}
+                <tr>
+                    <td>{{ wr.id }}</td>
+                    <td>{{ wr.requestingUser.name }}</td>
+                    <td>{{ wr.requestingUser.email }}</td>
+                    <td>{{ wr.sum }}</td>
+                    <td>{{ wr.status.getLabel() }}</td>
+                    <td>{{ wr.createdAt|date('d.m.Y H:i') }}</td>
+                    <td>{{ wr.paidAt ? wr.paidAt|date('d.m.Y H:i') : '—' }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% include 'components/pagination.html.twig' with {
+            pagination: pagination,
+            route_name: route_name
+        } %}
+    </div>
+{% endblock %}

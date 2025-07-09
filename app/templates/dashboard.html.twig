@@ -39,6 +39,16 @@
     {% endblock %}
     <!-- Основной контент -->
     <main class="flex-fill p-3">
+        {% for label, messages in app.flashes %}
+            <div class="container mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
         {% block body %}{% endblock %}
     </main>
 </div>

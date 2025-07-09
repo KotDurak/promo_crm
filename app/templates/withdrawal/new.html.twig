@@ -1,0 +1,36 @@
+{% extends 'dashboard.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h2>Создать заявку на вывод средств</h2>
+            {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+
+            <div class="mb-3">
+                {{ form_label(form.sum, 'Сумма для вывода', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.sum, {'attr': {'class': 'form-control', 'placeholder': 'Введите сумму'}}) }}
+                {{ form_errors(form.sum) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.cardNumber, 'Номер карты', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.cardNumber, {'attr': {'class': 'form-control', 'placeholder': 'Номер карты'}}) }}
+                {{ form_errors(form.cardNumber) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.phoneNumber, 'Номер телефона', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.phoneNumber, {'attr': {'class': 'form-control', 'placeholder': 'Номер телефона'}}) }}
+                {{ form_errors(form.phoneNumber) }}
+            </div>
+
+            <div class="mb-3">
+                {{ form_label(form.comment, 'Комментарий', {'label_attr': {'class': 'form-label'}}) }}
+                {{ form_widget(form.comment, {'attr': {'class': 'form-control', 'placeholder': 'Дополнительная информация', 'rows': 3}}) }}
+                {{ form_errors(form.comment) }}
+            </div>
+
+            <button type="submit" class="btn btn-primary">Отправить заявку</button>
+
+            {{ form_end(form) }}
+    </div>
+{% endblock %}
