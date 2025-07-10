@@ -8,6 +8,7 @@ use App\Form\OrganizationEditTypeForm;
 use App\Form\OrganizationType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -94,4 +95,28 @@ final class OrganizationController extends AbstractController
             'form'  => $form->createView()
         ]);
     }
+
+    #[Route('/organization/regenerate-api-key', name: 'organization_regenerate_api_key', methods: ['POST'])]
+    #[IsGranted('ROLE_OWNER')]
+    public function regenerateApiKey(EntityManagerInterface $em, Request $request): JsonResponse
+    {
+        $submittedToken = $request->headers->get('X-CSRF-TOKEN') ?? $request->request->get('_token');
+
+        if (!$this->isCsrfTokenValid('regenerate-api-key', $submittedToken)) {
+            return $this->json(['success' => false, 'message' => 'Недействительный CSRF-токен'], 403);
+        }
+
+        $organization = $this->getUser()->getOrganization();
+
+        // Генерируем новый случайный API ключ
+        $newApiKey = bin2hex(random_bytes(32));
+        $organization->setApiKey($newApiKey);
+        $em->flush();
+
+        return $this->json([
+            'success' => true,
+            'newApiKey' => $newApiKey
+        ]);
+    }
+
 }

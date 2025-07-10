@@ -6,7 +6,7 @@ use App\Entity\Enum\Status;
 use App\Repository\WithdrawalRequestRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use MongoDB\BSON\Type;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: WithdrawalRequestRepository::class)]
 class WithdrawalRequest
@@ -17,6 +17,9 @@ class WithdrawalRequest
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[Assert\NotBlank(
+        message: 'Сумма не может быть пустой'
+    )]
     private ?string $sum = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
@@ -49,6 +52,7 @@ class WithdrawalRequest
     {
         return $this->id;
     }
+
 
     public function getSum(): ?string
     {

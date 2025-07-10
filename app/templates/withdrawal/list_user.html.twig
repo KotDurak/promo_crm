@@ -3,6 +3,10 @@
 {% block body %}
     <div class="container mt-5">
         <h2>Мои заявки на вывод</h2>
+
+        {% include 'withdrawal/partials/balance.html.twig' %}
+
+        <a href="{{ path('withdrawal_new') }}" class="btn btn-primary mb-3">Вывести средства</a>
         <table class="table table-striped">
             <thead>
             <tr>

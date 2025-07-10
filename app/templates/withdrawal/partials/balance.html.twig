@@ -1,0 +1,7 @@
+<div class="alert alert-info mb-4">
+    <h5 class="alert-heading">Баланс</h5>
+    <p class="mb-1">Для вывода средств доступно: <strong>{{ app.user.balance|number_format(2, '.', ' ') }} ₽</strong></p>
+    {% if app.user.balance <= 0 %}
+        <p class="mb-0 text-danger">Недостаточно средств для вывода</p>
+    {% endif %}
+</div>

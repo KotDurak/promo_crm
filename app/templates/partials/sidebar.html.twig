@@ -25,9 +25,25 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_promo_code') }}">Мои промокоды</a>
                 </li>
+
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ path('withdrawal_new') }}">Вывод денег</a>
+                    <a class="nav-link" data-bs-toggle="collapse" href="#promoMenu" role="button" aria-expanded="false" aria-controls="promoMenu">
+                        Вывод денег <span class="float-end">▼</span>
+                    </a>
+                    <div class="collapse" id="promoMenu">
+                        <ul class="nav flex-column ps-3">
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('user_withdrawals') }}">Мой вывод денег</a>
+                            </li>
+                            {% if 'ROLE_OWNER' in app.user.roles  %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('owner_withdrawals') }}">Вывод денег сотрудников</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
                 </li>
+
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_logout') }}">Выход</a>
                 </li>

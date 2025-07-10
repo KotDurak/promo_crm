@@ -51,7 +51,7 @@ final class WithdrawalController extends AbstractController
 
             $this->addFlash('success', 'Заявка успешно создана');
 
-            return $this->redirectToRoute('app_withdrawal');
+            return $this->redirectToRoute('user_withdrawals');
         }
 
         return $this->render('withdrawal/new.html.twig', [
@@ -61,9 +61,9 @@ final class WithdrawalController extends AbstractController
 
     #[Route('/user/list', name: 'user_withdrawals')]
     public function listUserRequests(
-        Request $request,
+        Request                $request,
         EntityManagerInterface $em,
-        PaginatorInterface $paginator
+        PaginatorInterface     $paginator
     ): Response
     {
         $user = $this->getUser();
@@ -82,16 +82,16 @@ final class WithdrawalController extends AbstractController
 
         return $this->render('withdrawal/list_user.html.twig', [
             'pagination' => $pagination,
-            'route_name'    => 'user_withdrawals',
+            'route_name' => 'user_withdrawals',
         ]);
     }
 
     #[Route('/owner/list', name: 'owner_withdrawals')]
     #[IsGranted('ROLE_OWNER')]
     public function listAllRequests(
-        Request $request,
+        Request                $request,
         EntityManagerInterface $em,
-        PaginatorInterface $paginator
+        PaginatorInterface     $paginator
     ): Response
     {
         $queryBuilder = $em->getRepository(WithdrawalRequest::class)
@@ -105,20 +105,24 @@ final class WithdrawalController extends AbstractController
 
         if ($status = $request->query->get('status')) {
             $queryBuilder->andWhere('wr.status = :status')
-            ->setParameter('status', $status);
+                ->setParameter('status', $status);
         }
 
-        if ($requestingUserId = $request->query->getInt('requesting_user_id')) {
+        if ($requestingUserId = $request->query->get('requesting_user_id')) {
             $queryBuilder->andWhere('u.id = :userId')
                 ->setParameter('userId', $requestingUserId);
         }
 
         if ($createdAtFrom = $request->query->get('created_from')) {
+            $createdAtFrom = (new \DateTimeImmutable($createdAtFrom))->setTime(0, 0);
+
             $queryBuilder->andWhere('wr.createdAt >= :createdAtFrom')
-                ->setParameter('createdAtFrom', new \DateTimeImmutable($createdAtFrom));
+                ->setParameter('createdAtFrom', $createdAtFrom);
         }
 
         if ($createAtTo = $request->query->get('created_to')) {
+            $createAtTo = (new \DateTimeImmutable())->setTime(23, 59, 59);
+
             $queryBuilder->andWhere('wr.createdAt <= :createAtTo')
                 ->setParameter('createAtTo', $createAtTo);
         }
@@ -136,15 +140,15 @@ final class WithdrawalController extends AbstractController
 
         return $this->render('withdrawal/list_owner.html.twig', [
             'pagination' => $pagination,
-            'route_name'    => 'owner_withdrawals',
-            'statusesList'  => Status::getListForSelect(),
-            'users'         => $users,
+            'route_name' => 'owner_withdrawals',
+            'statusesList' => Status::getListForSelect(),
+            'users' => $users,
         ]);
     }
 
     #[Route('/cancel/{id}', name: 'withdrawal_cancel')]
     public function cancelRequest(
-        WithdrawalRequest $withdrawalRequest,
+        WithdrawalRequest      $withdrawalRequest,
         EntityManagerInterface $em,
     ): Response
     {
@@ -160,5 +164,87 @@ final class WithdrawalController extends AbstractController
         $this->addFlash('success', 'Заявка отменена');
 
         return $this->redirectToRoute('user_withdrawals');
+    }
+
+
+    #[Route('/owner/cancel/{id}', 'withdrawal_owner_cancel')]
+    #[IsGranted('ROLE_OWNER')]
+    public function cancelByOwner(
+        WithdrawalRequest      $withdrawalRequest,
+        EntityManagerInterface $em,
+        Request $request
+    ): Response
+    {
+        if (!$this->isCsrfTokenValid('cancel' . $withdrawalRequest->getId(),$request->request->get('_token'))) {
+            $this->addFlash('error', 'Недействительный CSRF-токен');
+            return $this->redirectToRoute('owner_withdrawals');
+        }
+
+        $owner = $this->getUser();
+        $requestUser = $withdrawalRequest->getRequestingUser();
+
+        if (
+            $owner->getOrganization() !== $requestUser->getOrganization()
+            || $withdrawalRequest->getStatus() !== Status::PENDING
+        ) {
+            $this->addFlash('error', 'Невозможно отменить эту заявку.');
+            return $this->redirectToRoute('owner_withdrawals');
+        }
+
+        $withdrawalRequest->setStatus(Status::CANCELLED);
+        $em->persist($withdrawalRequest);
+        $em->flush();
+        $this->addFlash('success', 'Заявка отменена');
+
+        return $this->redirectToRoute('owner_withdrawals');
+    }
+
+
+    #[Route('/approve{id}', name: 'withdrawal_approve', methods: ['POST'])]
+    #[IsGranted('ROLE_OWNER')]
+    public function approveRequest(
+        WithdrawalRequest      $withdrawalRequest,
+        EntityManagerInterface $em,
+        Request $request
+    )
+    {
+        if (!$this->isCsrfTokenValid('approve' . $withdrawalRequest->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Недействительный CSRF-токен');
+            return $this->redirectToRoute('owner_withdrawals');
+        }
+
+        $owner = $this->getUser();
+        $requestUser = $withdrawalRequest->getRequestingUser();
+
+        if (
+            $owner->getOrganization() !== $requestUser->getOrganization()
+            || $withdrawalRequest->getStatus() !== Status::PENDING
+        ) {
+            $this->addFlash('error', 'Невозможно отменить эту заявку.');
+            return $this->redirectToRoute('owner_withdrawals');
+        }
+
+        if ($requestUser->getBalance() < $withdrawalRequest->getSum()) {
+            $this->addFlash('error', 'У сотрудника недостаточно средств на балансе');
+        }
+
+        $withdrawalRequest->setStatus(Status::PAID);
+        $withdrawalRequest->setPaidAt(new \DateTimeImmutable());
+
+        try {
+            $em->beginTransaction();
+            $requestUser->setBalance(
+                $requestUser->getBalance() - $withdrawalRequest->getSum()
+            );
+
+            $em->flush();
+            $em->commit();
+            $this->addFlash('success', 'Выплата успешно подтверждена');
+        } catch (\Exception $ex) {
+            $em->rollback();
+            $this->addFlash('error', 'Ошибка при проведении выплаты');
+        }
+
+        return $this->redirectToRoute('owner_withdrawals');
     }
 }
