@@ -31,13 +31,6 @@ final class OrganizationController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
-    #[Route('/organization', name: 'app_organization')]
-    public function index(): Response
-    {
-        return $this->render('organization/index.html.twig', [
-            'controller_name' => 'OrganizationController',
-        ]);
-    }
 
     #[Route('/organization/create', name: 'create_organization')]
     public function create( Request $request): Response
@@ -92,7 +85,8 @@ final class OrganizationController extends AbstractController
         }
 
         return $this->render('organization/settings.html.twig', [
-            'form'  => $form->createView()
+            'form'  => $form->createView(),
+            'organization'  => $organization,
         ]);
     }
 
@@ -109,13 +103,12 @@ final class OrganizationController extends AbstractController
         $organization = $this->getUser()->getOrganization();
 
         // Генерируем новый случайный API ключ
-        $newApiKey = bin2hex(random_bytes(32));
-        $organization->setApiKey($newApiKey);
+        $organization->generateApiKey();
         $em->flush();
 
         return $this->json([
             'success' => true,
-            'newApiKey' => $newApiKey
+            'newApiKey' => $organization->getApiKey()
         ]);
     }
 
