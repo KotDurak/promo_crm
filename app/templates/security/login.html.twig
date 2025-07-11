@@ -32,6 +32,10 @@
 
             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
             <button type="submit" class="btn btn-primary w-100">Войти</button>
+
+            <div class="text-center">
+                <a href="{{ path('app_reset_password') }}" class="text-decoration-none">Забыли пароль?</a>
+            </div>
         </form>
     </div>
 {% endblock %}

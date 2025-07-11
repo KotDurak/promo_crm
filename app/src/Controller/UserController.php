@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 
@@ -98,7 +99,9 @@ final class UserController extends AbstractController
 
             $em->flush();
 
-            return $this->redirectToRoute('user_list');
+            return $this->isGranted('ROLE_OWNER')
+                ? $this->redirectToRoute('user_list')
+                : $this->redirectToRoute('user_edit', ['id' => $user->getId()]);
         }
 
         return $this->render('user/form.html.twig', [

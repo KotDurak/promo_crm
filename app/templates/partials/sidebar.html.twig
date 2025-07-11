@@ -6,10 +6,10 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ path('app_dashboard') }}">Главная</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ path('app_organization_settings') }}">Настройки организации</a>
-                </li>
                 {% if 'ROLE_OWNER' in app.user.roles %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_organization_settings') }}">Настройки организации</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('user_list') }}">Сотрудники</a>
                     </li>
