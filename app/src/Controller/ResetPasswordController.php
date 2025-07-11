@@ -8,7 +8,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+
+;
+
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -19,9 +22,9 @@ final class ResetPasswordController extends AbstractController
 
     #[Route('/reset-password', name: 'app_reset_password')]
     public function index(
-        Request $request,
-        EntityManagerInterface $em,
-        MailerInterface $mailer,
+        Request                     $request,
+        EntityManagerInterface      $em,
+        MailerInterface             $mailer,
         UserPasswordHasherInterface $passwordHasher
     ): Response
     {
@@ -41,10 +44,10 @@ final class ResetPasswordController extends AbstractController
                 $em->flush();
 
                 $email = (new Email())
-                ->from('no-reply@promo-crm.com')
-                ->to($user->getEmail())
-                ->subject('Новый пароль в системе PROMO CRM')
-                ->text("Ваш новый пароль: $newPassword\n\nПожалуйтса, смените его после логина.");
+                    ->from('no-reply@promo-crm.com')
+                    ->to($user->getEmail())
+                    ->subject('Новый пароль в системе PROMO CRM')
+                    ->text("Ваш новый пароль: $newPassword\n\nПожалуйтса, смените его после логина.");
 
                 $mailer->send($email);
                 $this->addFlash('success', 'Новый пароль отправлен вам на почту');

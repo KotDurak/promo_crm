@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\PromoCodeRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use http\Exception\InvalidArgumentException;
 
 #[ORM\Entity(repositoryClass: PromoCodeRepository::class)]
 #[ORM\Table(
@@ -34,6 +36,13 @@ class PromoCode
     #[ORM\ManyToOne(targetEntity: Organization::class)]
     #[ORM\JoinColumn(nullable: false)]
     private Organization $organization;
+
+
+    #[ORM\Column(
+        type: Types::INTEGER,
+        options: ['unsigned' => true, 'default' => 0]
+    )]
+    private int $registerCount = 0;
 
     public function getId(): ?int
     {
@@ -78,6 +87,23 @@ class PromoCode
     public function setOrganization(Organization $organization): self
     {
         $this->organization = $organization;
+
+        return $this;
+    }
+
+    public function getRegisterCount(): int
+    {
+        return $this->registerCount;
+    }
+
+    public function setRegisterCount(int $count): self
+    {
+        if ($count < 0) {
+            throw new InvalidArgumentException('RegisterCount не может быть отрицительным числом');
+        }
+
+
+        $this->registerCount = $count;
 
         return $this;
     }

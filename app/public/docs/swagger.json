@@ -1,0 +1,140 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "PROMO CRM API",
+        "version": "1.0.0",
+        "description": "API для работы с промокодами"
+    },
+    "servers": [
+        {
+            "url": "/",
+            "description": "Local server"
+        }
+    ],
+    "paths": {
+        "/api/token/refresh": {
+            "post": {
+                "summary": "Обновление токена",
+                "tags": ["Аутентификация"],
+                "parameters": [
+                    {
+                        "name": "X-API-TOKEN",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "a1dedc4ba797551f2b9a695929c3958b90853295801f0520c7000d37822adf3a"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Новый токен"
+                    }
+                }
+            }
+        },
+        "/api/promo-codes/register": {
+            "post": {
+                "summary": "Регистрация по промокоду",
+                "tags": ["Промо коды"],
+                "parameters": [
+                    {
+                        "name": "X-API-TOKEN",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "921f91c92407f7a5e8244af267a5bb428a4899a7b4bb63a29fbddeb7d8ffb50b"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "promo_code": {
+                                        "type": "string",
+                                        "example": "leto_rulit"
+                                    }
+                                },
+                                "required": ["promo_code"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешная регистрация"
+                    }
+                }
+            }
+        },
+        "/api/promo-codes/purchase": {
+            "post": {
+                "summary": "Покупка с промокодом",
+                "tags": ["Промо коды"],
+                "parameters": [
+                    {
+                        "name": "X-API-TOKEN",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "921f91c92407f7a5e8244af267a5bb428a4899a7b4bb63a29fbddeb7d8ffb50b"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "promo_code": {
+                                        "type": "string",
+                                        "example": "leto_rulit"
+                                    },
+                                    "sum": {
+                                        "type": "number",
+                                        "example": 400.00
+                                    }
+                                },
+                                "required": ["promo_code", "sum"]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешная покупка"
+                    }
+                }
+            }
+        },
+        "/api/promo-codes": {
+            "get": {
+                "summary": "Получить список промокодов",
+                "tags": ["Промо коды"],
+                "parameters": [
+                    {
+                        "name": "X-API-TOKEN",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "921f91c92407f7a5e8244af267a5bb428a4899a7b4bb63a29fbddeb7d8ffb50b"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список промокодов"
+                    }
+                }
+            }
+        }
+    }
+}

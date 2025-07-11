@@ -16,6 +16,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ path('app_promo_code_type') }}">Типы промокодов</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_swagger') }}">API документация</a>
+                    </li>
                 {% endif %}
                 {% if 'ROLE_USER' in app.user.roles %}
                     <li class="nav-item">

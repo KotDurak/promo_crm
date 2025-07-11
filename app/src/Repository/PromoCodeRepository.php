@@ -40,4 +40,17 @@ class PromoCodeRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+
+    public function findByCode(string $code): ?PromoCode
+    {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.promoCodeType', 'pt')
+            ->leftJoin('p.createdBy', 'createBy')
+            ->addSelect(['pt'])
+            ->andWhere('p.code = :code')
+            ->setParameter('code', $code)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }
