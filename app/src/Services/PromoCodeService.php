@@ -4,9 +4,11 @@ namespace App\Services;
 
 use App\Entity\Organization;
 use App\Entity\PromoCode;
+use App\Entity\PromoCodePurchase;
 use App\Repository\PromoCodeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use JetBrains\PhpStorm\ArrayShape;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class PromoCodeService
 {
@@ -20,6 +22,11 @@ class PromoCodeService
          * @var PromoCode $promoCode
         */
         $promoCode = $this->entityManager->getRepository(PromoCode::class)->findByCode($code);
+
+        if (empty($promoCode)) {
+            throw new NotFoundHttpException();
+        }
+
         $promoCode->setRegisterCount($promoCode->getRegisterCount() + 1);
         $this->entityManager->flush();
     }
@@ -30,7 +37,12 @@ class PromoCodeService
          * @var PromoCode $promoCode
          */
         $promoCode = $this->entityManager->getRepository(PromoCode::class)->findByCode($code);
-        //TODO реализовать пополнгение баланса пользователю при покупке промокода
+
+
+        if (empty($promoCode)) {
+            throw new NotFoundHttpException();
+        }
+
 
         $cashback = $promoCode->getPromoCodeType()->getCashback();
         $userCashback  = ($sum * $cashback) / 100;
@@ -42,6 +54,14 @@ class PromoCodeService
             $user->setBalance(
                 $user->getBalance() + $userCashback
             );
+
+            $promoCodePurchase = new PromoCodePurchase();
+            $promoCodePurchase->setPromoCode($promoCode);
+            $promoCodePurchase->setPromoCodeOwner($promoCode->getCreatedBy());
+            $promoCodePurchase->setPurchaseDate(new \DateTime());
+            $promoCodePurchase->setFullPrice($sum);
+            $promoCodePurchase->setCashback($userCashback);
+            $this->entityManager->persist($promoCodePurchase);
 
             $this->entityManager->flush();
             $this->entityManager->commit();

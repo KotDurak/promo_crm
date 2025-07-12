@@ -25,8 +25,10 @@ class Organization implements UserInterface
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $apiKeyExpiredAt = null;
-
     private Collection $users;
+
+    #[ORM\Column(type: Types::STRING, nullable: true)]
+    private ?string $siteAddress = null;
 
     #[ORM\OneToOne(targetEntity: User::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: "owner_id", referencedColumnName: "id", nullable: true, onDelete: "SET NULL")]
@@ -113,5 +115,17 @@ class Organization implements UserInterface
     public function getUserIdentifier(): string
     {
         return $this->apiKey;
+    }
+
+    public function getSiteAddress(): ?string
+    {
+        return $this->siteAddress;
+    }
+
+    public function setSiteAddress(?string $address): self
+    {
+        $this->siteAddress = $address;
+
+        return $this;
     }
 }
