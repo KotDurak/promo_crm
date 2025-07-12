@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Entity\Organization;
 use App\Entity\PromoCode;
+use App\Repository\PromoCodeRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use JetBrains\PhpStorm\ArrayShape;
 
 class PromoCodeService
 {
@@ -49,5 +52,21 @@ class PromoCodeService
 
             return false;
         }
+    }
+
+    #[ArrayShape(['items' => "array", 'total' => "int"])]
+    public function getPromoCodes(Organization $organization, int $page, int $limit): array
+    {
+        /**
+         * @var PromoCodeRepository $repository
+        */
+        $repository = $this->entityManager->getRepository(PromoCode::class);
+        $promoCodes = $repository->finnByOrganizationPaginated($organization, $page, $limit);
+        $totalCount = $repository->countByOrganization($organization);
+
+        return [
+            'items' => $promoCodes,
+            'total' => $totalCount,
+        ];
     }
 }

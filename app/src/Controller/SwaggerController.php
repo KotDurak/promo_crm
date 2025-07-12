@@ -15,4 +15,12 @@ final class SwaggerController extends AbstractController
     {
         return $this->render('docs/index.html.twig');
     }
+
+
+    #[Route('/documentation/swagger.json')]
+    public function getSwagger(): Response
+    {
+        $path = $this->getParameter('kernel.project_dir') . '/swagger/swagger.json';
+        return $this->file($path);
+    }
 }

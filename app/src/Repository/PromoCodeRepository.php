@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Organization;
 use App\Entity\PromoCode;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -52,5 +53,29 @@ class PromoCodeRepository extends ServiceEntityRepository
             ->setParameter('code', $code)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    public function finnByOrganizationPaginated(Organization $organization, int $page, int $limit): array
+    {
+        $offset = ($page - 1) * $limit;
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.promoCodeType', 'type')
+            ->addSelect('type')
+            ->andWhere('p.organization = :org')
+            ->setParameter('org', $organization)
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countByOrganization(Organization $organization): int
+    {
+        return (int) $this->createQueryBuilder('p')
+            ->select('count(p.id)')
+            ->andWhere('p.organization = :org')
+            ->setParameter('org', $organization)
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 }

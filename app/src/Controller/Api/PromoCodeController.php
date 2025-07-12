@@ -2,7 +2,10 @@
 
 namespace App\Controller\Api;
 
+use App\Dto\PromoCodeDto;
+use App\Entity\Organization;
 use App\Entity\PromoCode;
+use App\Repository\PromoCodeRepository;
 use App\Services\PromoCodeService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,19 +22,27 @@ final class PromoCodeController extends AbstractController
     ) {}
 
     #[Route('/', methods: ['GET'])]
-    public function list(Request $request, EntityManagerInterface $em): JsonResponse
+    public function list(Request $request): JsonResponse
     {
+        /**
+         * @var Organization $organization
+        */
         $organization = $this->getUser();
 
-        $promoCodes = $em->getRepository(PromoCode::class)
-            ->findBy(['organization' => $organization]);
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->get('limit', 10);
+        $data = $this->promoCodeService->getPromoCodes($organization, $page, $limit);
+        $result = array_map(fn(PromoCode $promoCode) => PromoCodeDto::toArray($promoCode), $data['items']);
 
-        $result = array_map(static fn(PromoCode $pc) => [
-            'id'    => $pc->getId(),
-            'code'  => $pc->getCode(),
-        ], $promoCodes);
-
-        return new JsonResponse(['data' => $result]);
+        return new JsonResponse([
+            'data' => $result,
+            'pagination'    => [
+                'total' => $data['total'],
+                'limit' => $limit,
+                'page'  => $page,
+                'pages' => (int)ceil($data['total'] / $limit),
+            ]
+        ]);
     }
 
 
@@ -69,5 +80,23 @@ final class PromoCodeController extends AbstractController
         }
 
         return new JsonResponse(['code' => '1', 'message' => 'Cannot set cashback']);
+    }
+
+    #[Route(
+        '/{id}',
+        requirements: ['id' => '\d+'],
+        methods: ['GET']
+    )]
+    public function getPromoCode(PromoCode $promoCode): JsonResponse
+    {
+        $organization = $this->getUser();
+
+        if ($promoCode->getOrganization() !== $organization) {
+            return new JsonResponse(['error' => 'Promo code not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse([
+            'data' => PromoCodeDto::toArray($promoCode),
+        ]);
     }
 }
