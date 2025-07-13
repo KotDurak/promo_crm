@@ -3,5 +3,9 @@
 {% block title %}Главня{% endblock %}
 
 {% block body %}
-
+    <h2>Статискика за месяц</h2>
+    {% include promoCodeView  with {
+        statistic: promoCodes,
+        totals: promoCodesTotals
+    } %}
 {% endblock %}

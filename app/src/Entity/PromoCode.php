@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\PromoCodeRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use http\Exception\InvalidArgumentException;
@@ -36,6 +37,12 @@ class PromoCode
     #[ORM\ManyToOne(targetEntity: Organization::class)]
     #[ORM\JoinColumn(nullable: false)]
     private Organization $organization;
+
+    #[ORM\OneToMany(
+        targetEntity: PromoCodePurchase::class,
+        mappedBy: 'promoCode'
+    )]
+    private Collection $purchases;
 
 
     #[ORM\Column(

@@ -43,5 +43,5 @@ security:
         - { path: ^/logout$, roles: PUBLIC_ACCESS }
         - { path: ^/dashboard, roles: [ROLE_USER, ROLE_OWNER] }
         - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
-        - { path: ^/api/token/refresh, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
         - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

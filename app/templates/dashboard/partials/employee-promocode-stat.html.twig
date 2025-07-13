@@ -1,0 +1,23 @@
+<table class="table">
+    <thead>
+    <tr>
+        <th>Промокод</th>
+        <th>Полная стоимость покупки</th>
+        <th>Прибыль</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for item in statistic.items %}
+        <tr>
+            <td>{{ item.code }}</td>
+            <td>{{ item.fullPrice }}</td>
+            <td>{{ item.cashback }}</td>
+        </tr>
+    {% endfor %}
+    <tr class="table-secondary fw-bold">
+        <td>ИТОГО</td>
+        <td>{{ totals.fullPrice }}</td>
+        <td>{{ totals.cashback }}</td>
+    </tr>
+    </tbody>
+</table>
