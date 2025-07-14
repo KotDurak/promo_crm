@@ -93,6 +93,7 @@ final class PromoCodeController extends AbstractController
         return $this->render('promo_code/form.html.twig', [
             'form'  => $form->createView(),
             'title' => 'Редактировать промокод',
+            'promoLink' =>  $promoCode->getLinkForPromo(),
         ]);
     }
 

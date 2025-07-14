@@ -34,6 +34,9 @@ class Organization implements UserInterface
     #[ORM\JoinColumn(name: "owner_id", referencedColumnName: "id", nullable: true, onDelete: "SET NULL")]
     private ?User $owner = null;
 
+    #[ORM\Column(type: Types::STRING, length: 500, nullable: true)]
+    private ?string $linkTemplate = null;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -125,6 +128,18 @@ class Organization implements UserInterface
     public function setSiteAddress(?string $address): self
     {
         $this->siteAddress = $address;
+
+        return $this;
+    }
+
+    public function getLinkTemplate():? string
+    {
+        return $this->linkTemplate;
+    }
+
+    public function setLinkTemplate(?string $link): self
+    {
+        $this->linkTemplate = $link;
 
         return $this;
     }

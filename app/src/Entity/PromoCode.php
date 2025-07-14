@@ -114,4 +114,19 @@ class PromoCode
 
         return $this;
     }
+
+    public function getLinkForPromo():? string
+    {
+        $organization = $this->getOrganization();
+        $template = $organization->getLinkTemplate();
+        $siteAddress = $organization->getSiteAddress();
+
+        if (empty($template) || empty($siteAddress)) {
+            return null;
+        }
+
+        $result = str_replace(['{link}', '{promo}'], [$siteAddress, $this->code], $template);
+
+        return preg_replace('#(?<!:)//+#', '/', $result);
+    }
 }

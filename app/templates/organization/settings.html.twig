@@ -52,6 +52,17 @@
         {{ form_errors(form.siteAddress) }}
     </div>
 
+    <div class="mb-3">
+        {{ form_label(form.linkTemplate) }}
+        {{ form_widget(form.linkTemplate, {'attr': {'class': 'form-control', 'placeholder': '{link}?promo={promo}'}}) }}
+        {{ form_errors(form.linkTemplate) }}
+        <div class="form-text text-muted">
+            Параметры для передачи ссылки <br/>
+            {link} - адес вашего сайта <br/>
+            {promo} - промокод
+        </div>
+    </div>
+
     <button class="btn btn-primary" type="submit">Сохранить</button>
     {{ form_end(form) }}
 {% endblock %}

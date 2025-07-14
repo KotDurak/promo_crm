@@ -20,9 +20,29 @@
             {{ form_errors(form.promoCodeType) }}
         </div>
 
+        {% if promoLink is defined and promoLink is not empty %}
+            <div class="d-flex align-items-center">
+                <span class="me-3">{{ promoLink }}</span>
+                <button type="button" class="btn btn-primary btn-sm"  onclick="copyToClipboard('{{ promoLink }}')">Копировать</button>
+            </div>
+        {% endif %}
+
         <button type="submit" class="btn btn-primary">Сохранить</button>
         <a href="{{ path('app_promo_code') }}" class="btn btn-secondary">Отмена</a>
 
         {{ form_end(form) }}
 
+{% endblock %}
+
+{% block javascripts %}
+    {{  parent() }}
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('Ссылка скопирована!');
+            }, function() {
+                alert('Не удалось скопировать ссылку.');
+            });
+        }
+    </script>
 {% endblock %}

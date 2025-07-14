@@ -18,6 +18,7 @@ class OrganizationEditTypeForm extends AbstractType
             ->add('name', TextType::class, ['label' => 'Название организации'])
             ->add('apiKey', TextType::class, ['label' => 'Ключ API'])
             ->add('siteAddress', TextType::class, ['label' => 'Адрес вашего сайта'])
+            ->add('linkTemplate', TextType::class, ['label' => 'Шаблон для ссылки'])
         ;
     }
 
