@@ -99,4 +99,22 @@ final class PromoCodeController extends AbstractController
             'data' => PromoCodeDto::toArray($promoCode),
         ]);
     }
+
+    #[Route(
+        '/info/{code}',
+        methods: ['GET']
+    )]
+    public function getPromoCodeInfo(string $code, EntityManagerInterface $em): JsonResponse
+    {
+        $organization = $this->getUser();
+        $promoCode = $em->getRepository(PromoCode::class)->findOneBy(['code' => $code]);
+
+        if (empty($promoCode) || $promoCode->getOrganization() !== $organization) {
+            return new JsonResponse(['error' => 'Promo code not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse([
+            'data'  => PromoCodeDto::toArray($promoCode),
+        ]);
+    }
 }

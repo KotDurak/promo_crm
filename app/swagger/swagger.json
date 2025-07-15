@@ -242,6 +242,40 @@
                     }
                 }
             }
+        },
+        "/api/promo-codes/info/{code}": {
+            "get": {
+                "summary": "Получить промокод по названию",
+                "tags": ["Промо коды"],
+                "parameters": [
+                    {
+                        "name": "X-API-TOKEN",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "921f91c92407f7a5e8244af267a5bb428a4899a7b4bb63a29fbddeb7d8ffb50b"
+                        }
+                    },
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "required": true,
+                        "description": "Промокод",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Детали промокода"
+                    },
+                    "404": {
+                        "description": "Промокод не найден"
+                    }
+                }
+            }
         }
     }
 }
